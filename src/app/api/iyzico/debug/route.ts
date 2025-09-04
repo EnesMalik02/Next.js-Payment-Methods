@@ -5,13 +5,20 @@ export async function GET(request: NextRequest) {
   const action = searchParams.get('action');
 
   if (action === 'env-check') {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const apiUrl = isProduction ? 'https://api.iyzipay.com' : 'https://sandbox-api.iyzipay.com';
+    
     return NextResponse.json({
       hasApiKey: !!process.env.IYZICO_API_KEY,
       hasSecretKey: !!process.env.IYZICO_SECRET_KEY,
       baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
-      nodeEnv: process.env.NODE_ENV,
+      nodeEnv: process.env.NODE_ENV || 'development',
+      environment: isProduction ? 'PRODUCTION' : 'SANDBOX',
+      apiUrl: apiUrl,
       apiKeyLength: process.env.IYZICO_API_KEY?.length || 0,
-      secretKeyLength: process.env.IYZICO_SECRET_KEY?.length || 0
+      secretKeyLength: process.env.IYZICO_SECRET_KEY?.length || 0,
+      apiKeyPrefix: process.env.IYZICO_API_KEY?.substring(0, 8) + '...' || 'YOK',
+      warning: isProduction ? '⚠️  CANLI ORTAM - GERÇEK ÖDEMELER!' : '✅ TEST ORTAMI - GÜVENLİ'
     });
   }
 

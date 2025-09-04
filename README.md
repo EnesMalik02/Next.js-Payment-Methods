@@ -50,15 +50,25 @@ Uygulama [http://localhost:3000](http://localhost:3000) adresinde çalışacakt�
 
 ## 🔧 Iyzico API Anahtarları
 
-### Test Ortamı (Sandbox)
+### Test Ortamı (Sandbox) - Önerilen
 1. [Iyzico Developer](https://dev.iyzipay.com/) hesabınızda oturum açın
-2. **Ayarlar > API Anahtarları** bölümünden test anahtarlarınızı alın
-3. `.env.local` dosyasına ekleyin
+2. **Ayarlar > API Anahtarları** bölümünden **SANDBOX** anahtarlarınızı alın
+3. `.env.local` dosyasına ekleyin:
+   ```env
+   IYZICO_API_KEY=sandbox-your_api_key_here
+   IYZICO_SECRET_KEY=sandbox-your_secret_key_here
+   NODE_ENV=development
+   ```
 
 ### Canlı Ortam (Production)
 1. [Iyzico Merchant Panel](https://merchant.iyzipay.com/) hesabınızda oturum açın
-2. Canlı API anahtarlarınızı alın
-3. `NODE_ENV=production` olarak ayarlayın
+2. **CANLI** API anahtarlarınızı alın
+3. Environment variables'ı ayarlayın:
+   ```env
+   IYZICO_API_KEY=your_live_api_key_here
+   IYZICO_SECRET_KEY=your_live_secret_key_here
+   NODE_ENV=production
+   ```
 
 ## 💳 Test Kartları
 
@@ -180,16 +190,26 @@ npm run dev
 
 ## 🔧 Sorun Giderme
 
-### "Geçersiz token" Hatası
+### "Geçersiz token" veya API Hatası
 Bu hata genellikle aşağıdaki durumlarda oluşur:
-- Aynı token birden fazla kullanılmaya çalışıldığında
+- **Yanlış API ortamı**: Production API anahtarları ile sandbox URL kullanımı
+- **Yanlış API anahtarları**: Sandbox/Production karışıklığı
 - Environment variables doğru ayarlanmadığında
 - Callback URL'i yanlış yapılandırıldığında
 
-**Çözüm:** Her ödeme işleminde yeni token oluşturulur. Eğer hata devam ederse:
-1. `.env.local` dosyasını kontrol edin
-2. `npm run test:connection` ile bağlantıyı test edin
-3. Browser cache'ini temizleyin
+**Çözüm Adımları:**
+1. **Ortam kontrolü**: `npm run test:iyzico` ile konfigürasyonu kontrol edin
+2. **API anahtarları**: 
+   - Development için: [dev.iyzipay.com](https://dev.iyzipay.com) sandbox anahtarları
+   - Production için: [merchant.iyzipay.com](https://merchant.iyzipay.com) canlı anahtarları
+3. **Environment variables** doğru ayarlandığından emin olun:
+   ```env
+   NODE_ENV=development  # Sandbox için
+   # veya
+   NODE_ENV=production   # Canlı ortam için
+   ```
+4. `npm run test:connection` ile bağlantıyı test edin
+5. Browser cache'ini temizleyin
 
 ### Debug API
 Sistem durumunu kontrol etmek için: `http://localhost:3000/api/iyzico/debug`

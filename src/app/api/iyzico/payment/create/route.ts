@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       currency: IYZICO_CONSTANTS.CURRENCY.TRY,
       basketId: basketId,
       paymentGroup: IYZICO_CONSTANTS.PAYMENT_GROUP.PRODUCT,
-      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/api/iyzico/callback`,
+      callbackUrl: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/iyzico/callback`,
       enabledInstallments: [1, 2, 3, 6, 9, 12],
       buyer: {
         id: buyerInfo.id,

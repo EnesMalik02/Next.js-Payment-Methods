@@ -2,11 +2,11 @@ import Iyzipay from 'iyzipay';
 
 // Iyzico konfigürasyonu
 const iyzipayConfig = {
-  apiKey: process.env.IYZICO_API_KEY!,
-  secretKey: process.env.IYZICO_SECRET_KEY!,
-  uri: process.env.NODE_ENV === 'test' 
-    ? 'https://sandbox-api.iyzipay.com'  // Test ortamı
-    : 'https://api.iyzipay.com'  // Canlı ortam
+  apiKey: process.env.IYZICO_API_KEY,
+  secretKey: process.env.IYZICO_SECRET_KEY,
+  uri: process.env.NODE_ENV === 'production' 
+    ? 'https://api.iyzipay.com'  // Canlı ortam
+    : 'https://sandbox-api.iyzipay.com'  // Test ortamı (development/test)
 };
 
 // Iyzico instance'ını oluştur

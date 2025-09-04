@@ -1,11 +1,25 @@
 // Iyzico entegrasyonunu test etmek için basit bir script
 
 const testEnvironmentVariables = () => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  const apiUrl = isProduction ? 'https://api.iyzipay.com' : 'https://sandbox-api.iyzipay.com';
+  
   console.log('🔍 Environment Variables Kontrolü:');
   console.log('IYZICO_API_KEY:', process.env.IYZICO_API_KEY ? '✅ Mevcut' : '❌ Eksik');
   console.log('IYZICO_SECRET_KEY:', process.env.IYZICO_SECRET_KEY ? '✅ Mevcut' : '❌ Eksik');
   console.log('NEXT_PUBLIC_BASE_URL:', process.env.NEXT_PUBLIC_BASE_URL || '❌ Eksik');
   console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+  console.log('ORTAM:', isProduction ? '⚠️  PRODUCTION (CANLI)' : '✅ SANDBOX (TEST)');
+  console.log('API URL:', apiUrl);
+  console.log('');
+  
+  if (!isProduction) {
+    console.log('💡 Test ortamında çalışıyorsunuz. Sandbox API anahtarlarını kullanın!');
+    console.log('   Sandbox anahtarları: https://dev.iyzipay.com');
+  } else {
+    console.log('⚠️  UYARI: Production ortamında çalışıyorsunuz!');
+    console.log('   Canlı API anahtarlarını kullanın: https://merchant.iyzipay.com');
+  }
   console.log('');
 };
 
