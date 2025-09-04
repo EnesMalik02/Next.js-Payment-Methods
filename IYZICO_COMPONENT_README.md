@@ -1,22 +1,23 @@
 # IyzicoPayment Component Kullanım Kılavuzu
 
-Bu proje, Iyzico ödeme sistemini kolayca entegre edebileceğiniz tekrar kullanılabilir bir React component'i içerir.
+Bu proje, Iyzico ödeme sistemini kolayca entegre edebileceğiniz modern ve temiz mimariye sahip bir React component'i içerir.
 
 ## Özellikler
 
-- ✅ **Satın Al** butonu hatası düzeltildi
-- ✅ Tekrar kullanılabilir component yapısı
-- ✅ Tek ürün ve sepet ödemesi desteği
-- ✅ Esnek konfigürasyon seçenekleri
-- ✅ TypeScript desteği
-- ✅ Otomatik validasyon
-- ✅ Loading state yönetimi
+- ✅ **Temiz Mimari**: Ayrılmış katmanlar (UI, Business Logic, API)
+- ✅ **Custom Hook**: useIyzicoPayment hook'u ile fonksiyonel işlemler
+- ✅ **Service Layer**: PaymentService ile API çağrıları
+- ✅ **Validasyonsuz API**: API'ler sadece isteği işler
+- ✅ **UI Odaklı Component**: Sadece görsel işlemler
+- ✅ **TypeScript Desteği**: Tam tip güvenliği
+- ✅ **Tekrar Kullanılabilir**: Her projede kullanabilirsiniz
 
 ## Kurulum
 
-1. `src/components/IyzicoPayment.tsx` dosyasını projenize kopyalayın
-2. `src/utils/izycoHelper.ts` dosyasını projenize kopyalayın
-3. Iyzico API ayarlarınızı yapılandırın
+1. `src/components/IyzicoPayment.tsx` - UI Component
+2. `src/components/useIyzicoPayment.ts` - Custom Hook
+3. `src/services/paymentService.ts` - API Service
+4. API route'larınızı kopyalayın
 
 ## Kullanım Örnekleri
 
@@ -163,14 +164,37 @@ interface BuyerInfo {
 }
 ```
 
+## Mimari
+
+### 1. UI Layer - IyzicoPayment.tsx
+- Sadece görsel işlemler ve kullanıcı etkileşimi
+- Hook'tan gelen fonksiyonları çağırır
+- State yönetimi minimal
+
+### 2. Business Logic Layer - useIyzicoPayment.ts
+- Tüm iş mantığı burada
+- Validasyon işlemleri
+- Veri hazırlama
+- State yönetimi
+
+### 3. Service Layer - paymentService.ts
+- API çağrıları
+- HTTP işlemleri
+- Error handling
+
+### 4. API Layer - route.ts
+- Sadece istekleri işler
+- Validasyon YOK
+- İş mantığı YOK
+
 ## Avantajlar
 
-1. **Kolay Entegrasyon**: Tek bir component ile tüm ödeme işlemleri
-2. **Tekrar Kullanılabilir**: Her projede kullanabilirsiniz
-3. **Esnek Yapı**: Farklı kullanım senaryolarına uygun
-4. **Hata Yönetimi**: Otomatik hata yakalama ve bildirme
-5. **TypeScript Desteği**: Tip güvenliği
-6. **Responsive Tasarım**: Mobil uyumlu
+1. **Temiz Kod**: Ayrılmış sorumluluklar
+2. **Kolay Test**: Her katman ayrı test edilebilir
+3. **Bakım Kolaylığı**: Değişiklikler izole
+4. **Tekrar Kullanılabilir**: Modüler yapı
+5. **TypeScript Desteği**: Tam tip güvenliği
+6. **Scalable**: Büyük projelere uygun
 
 ## Notlar
 

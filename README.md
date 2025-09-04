@@ -1,242 +1,127 @@
-# Next.js Iyzico Ödeme Entegrasyonu
+# Minimal Iyzico Payment Component
 
-Bu proje, Next.js 15 ve Iyzico ödeme sistemi entegrasyonunu içeren modern bir e-ticaret uygulamasıdır. GitHub'daki [iyzipay-node](https://github.com/iyzico/iyzipay-node) reposundan yararlanılarak oluşturulmuştur.
+En basit ve minimal Iyzico ödeme sistemi implementasyonu.
 
-## 🚀 Özellikler
+## 🎯 Amaç
 
-- ✅ Modern Next.js 15 ve React 19 kullanımı
-- ✅ Iyzico Checkout Form entegrasyonu
-- ✅ TypeScript desteği
-- ✅ Tailwind CSS ile responsive tasarım
-- ✅ Sepet yönetimi (localStorage)
-- ✅ Ödeme durumu takibi
-- ✅ Test kartları ile kolay test etme
-- ✅ Güvenli API route'ları
-- ✅ Hata yönetimi ve kullanıcı bildirimleri
+Sanal ürün satışı için en minimal ödeme yapısı. Sadece zorunlu alanlar ve token işlemleri.
 
-## 📦 Kurulum
-
-### 1. Depoyu klonlayın
-```bash
-git clone <repository-url>
-cd Next.js-Payment-Ways
-```
-
-### 2. Bağımlılıkları yükleyin
-```bash
-npm install
-```
-
-### 3. Environment variables ayarlayın
-`env.example` dosyasını kopyalayın ve `.env.local` olarak yeniden adlandırın:
-```bash
-cp env.example .env.local
-```
-
-`.env.local` dosyasını düzenleyin ve Iyzico API anahtarlarınızı ekleyin:
-```env
-IYZICO_API_KEY=your_iyzico_api_key_here
-IYZICO_SECRET_KEY=your_iyzico_secret_key_here
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-NODE_ENV=development
-```
-
-### 4. Uygulamayı başlatın
-```bash
-npm run dev
-```
-
-Uygulama [http://localhost:3000](http://localhost:3000) adresinde çalışacaktır.
-
-## 🔧 Iyzico API Anahtarları
-
-### Test Ortamı (Sandbox) - Önerilen
-1. [Iyzico Developer](https://dev.iyzipay.com/) hesabınızda oturum açın
-2. **Ayarlar > API Anahtarları** bölümünden **SANDBOX** anahtarlarınızı alın
-3. `.env.local` dosyasına ekleyin:
-   ```env
-   IYZICO_API_KEY=sandbox-your_api_key_here
-   IYZICO_SECRET_KEY=sandbox-your_secret_key_here
-   NODE_ENV=development
-   ```
-
-### Canlı Ortam (Production)
-1. [Iyzico Merchant Panel](https://merchant.iyzipay.com/) hesabınızda oturum açın
-2. **CANLI** API anahtarlarınızı alın
-3. Environment variables'ı ayarlayın:
-   ```env
-   IYZICO_API_KEY=your_live_api_key_here
-   IYZICO_SECRET_KEY=your_live_secret_key_here
-   NODE_ENV=production
-   ```
-
-## 💳 Test Kartları
-
-Uygulamayı test etmek için aşağıdaki test kartlarını kullanabilirsiniz:
-
-### Başarılı Ödeme Kartları
-| Kart Numarası | Banka | Kart Türü |
-|---------------|-------|-----------|
-| 5528790000000008 | Halkbank | Master Card (Credit) |
-| 4766620000000001 | Denizbank | Visa (Debit) |
-| 5890040000000016 | Akbank | Master Card (Debit) |
-| 4603450000000000 | Denizbank | Visa (Credit) |
-
-### Hata Test Kartları
-| Kart Numarası | Hata Türü |
-|---------------|-----------|
-| 4111111111111129 | Yetersiz bakiye |
-| 4129111111111111 | İşlem reddedildi |
-| 4128111111111112 | Geçersiz işlem |
-| 4127111111111113 | Kayıp kart |
-
-**Not:** Tüm test kartları için CVV: `123`, Son Kullanma Tarihi: `12/2030` kullanabilirsiniz.
-
-## 📁 Proje Yapısı
+## 📁 Dosya Yapısı
 
 ```
 src/
-├── app/
-│   ├── api/
-│   │   └── iyzico/
-│   │       ├── callback/          # Ödeme callback endpoint'i
-│   │       └── payment/
-│   │           ├── create/         # Ödeme oluşturma API
-│   │           └── retrieve/       # Ödeme sorgulama API
-│   ├── order-result/               # Ödeme sonuç sayfası
-│   ├── payment/                    # Ödeme formu sayfası
-│   ├── globals.css                 # Global CSS
-│   ├── layout.tsx                  # Ana layout
-│   └── page.tsx                    # Ana sayfa (ürün listesi)
+├── components/
+│   └── BuyButton.tsx          # UI Component
+├── hooks/
+│   └── usePayment.ts          # Payment Hook  
 ├── lib/
-│   └── iyzico.ts                   # Iyzico konfigürasyon ve yardımcı fonksiyonlar
+│   └── iyzico.ts             # Iyzico Config
+└── app/
+    ├── api/payment/
+    │   └── route.ts          # API Route
+    └── page.tsx              # Demo Page
 ```
 
-## 🔄 Ödeme Akışı
+## 🚀 Kullanım
 
-1. **Ürün Seçimi**: Kullanıcı ürünleri sepete ekler
-2. **Ödeme Sayfası**: Müşteri bilgilerini doldurur
-3. **Iyzico Entegrasyonu**: API üzerinden Iyzico'ya ödeme talebi gönderilir
-4. **Ödeme Formu**: Kullanıcı Iyzico'nun güvenli ödeme sayfasına yönlendirilir
-5. **Callback**: Ödeme sonucu callback endpoint'ine döner
-6. **Sonuç Sayfası**: Kullanıcıya ödeme durumu gösterilir
+```tsx
+import BuyButton from '@/components/BuyButton';
 
-## 🛠️ API Endpoints
+const product = {
+  id: 1,
+  name: 'Sanal Ürün',
+  price: 10000, // 100 TL (kuruş cinsinden)
+  category: 'Digital',
+  description: 'Sanal ürün açıklaması'
+};
 
-### POST /api/iyzico/payment/create
-Yeni ödeme oluşturur ve Iyzico checkout form döner.
+<BuyButton
+  product={product}
+  buttonText="Satın Al"
+  onSuccess={(result) => {
+    console.log('Ödeme başarılı:', result);
+  }}
+  onError={(error) => {
+    console.error('Ödeme hatası:', error);
+  }}
+/>
+```
 
-**Request Body:**
-```json
-{
-  "cartItems": [
-    {
-      "id": 1,
-      "name": "Ürün Adı",
-      "price": 10000,
-      "quantity": 1,
-      "category": "Elektronik"
-    }
-  ],
-  "buyerInfo": {
-    "name": "John",
-    "surname": "Doe",
-    "email": "john@example.com",
-    "phone": "+90 555 123 45 67",
-    "address": "Test Adres",
-    "city": "İstanbul",
-    "zipCode": "34000"
-  }
+## ⚙️ Kurulum
+
+1. Environment variables ekleyin:
+```env
+IYZICO_API_KEY=your_api_key
+IYZICO_SECRET_KEY=your_secret_key
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+2. Component'i projenize kopyalayın
+3. Hook'u kopyalayın
+4. API route'u kopyalayın
+5. Iyzico config'i kopyalayın
+
+## 🔧 Özellikler
+
+- ✅ **Minimal**: Sadece gerekli kod
+- ✅ **Tek Ürün**: Basit satın alma
+- ✅ **Demo Data**: Otomatik müşteri bilgileri
+- ✅ **TypeScript**: Tip güvenliği
+- ✅ **Loading State**: Kullanıcı geri bildirimi
+- ✅ **Error Handling**: Hata yönetimi
+
+## 🎨 Component API
+
+```tsx
+interface BuyButtonProps {
+  product: Product;           // Zorunlu - Ürün bilgileri
+  buttonText?: string;        // Opsiyonel - Buton metni
+  className?: string;         // Opsiyonel - CSS sınıfları
+  onSuccess?: (result) => void; // Opsiyonel - Başarı callback
+  onError?: (error) => void;    // Opsiyonel - Hata callback
 }
 ```
 
-### POST /api/iyzico/callback
-Iyzico'dan gelen ödeme sonucu callback'ini işler.
+## 📊 Product Interface
 
-### POST /api/iyzico/payment/retrieve
-Ödeme durumunu sorgular.
+```tsx
+interface Product {
+  id: number;
+  name: string;
+  price: number;        // Kuruş cinsinden (100 TL = 10000)
+  category: string;
+  description: string;
+}
+```
 
 ## 🔒 Güvenlik
 
-- API anahtarları sunucu tarafında saklanır
-- Ödeme işlemleri Iyzico'nun güvenli altyapısı üzerinden gerçekleşir
-- Hassas veriler client-side'da saklanmaz
-- HTTPS kullanımı önerilir (production'da zorunlu)
+- Minimal güvenlik (sadece token)
+- Demo müşteri bilgileri
+- Validasyon yok
+- Sadece zorunlu alanlar
 
-## 🚦 Ortam Ayarları
+## 🎯 Hedef Kullanım
 
-### Development (Test Ortamı)
-- Iyzico Sandbox API kullanılır
-- Test kartları ile ödeme yapılabilir
-- Debug logları aktiftir
+Bu yapı **sanal ürün satışı** için tasarlandı:
+- Digital product satışı
+- Subscription/abonelik
+- License/lisans satışı
+- Online course/kurs
 
-### Production (Canlı Ortam)
-- Iyzico Production API kullanılır
-- Gerçek kartlarla ödeme alınır
-- `NODE_ENV=production` olarak ayarlanmalıdır
+## ⚠️ Notlar
 
-## 🛠️ Test Komutları
+- Fiyatlar kuruş cinsinden girilmeli
+- Production'da güvenlik önlemleri ekleyin
+- Müşteri bilgileri doğrulaması ekleyin
+- Error handling'i geliştirin
 
-```bash
-# Iyzico konfigürasyonunu test et
-npm run test:iyzico
+## 🚀 Avantajlar
 
-# API bağlantısını test et (server çalışırken)
-npm run test:connection
+1. **Çok Basit**: Minimum kod
+2. **Hızlı Setup**: 5 dakikada hazır
+3. **Modüler**: Kolayca genişletilebilir
+4. **TypeScript**: Tip güvenliği
+5. **Modern**: React hooks kullanımı
 
-# Development server'ı başlat
-npm run dev
-```
-
-## 🔧 Sorun Giderme
-
-### "Geçersiz token" veya API Hatası
-Bu hata genellikle aşağıdaki durumlarda oluşur:
-- **Yanlış API ortamı**: Production API anahtarları ile sandbox URL kullanımı
-- **Yanlış API anahtarları**: Sandbox/Production karışıklığı
-- Environment variables doğru ayarlanmadığında
-- Callback URL'i yanlış yapılandırıldığında
-
-**Çözüm Adımları:**
-1. **Ortam kontrolü**: `npm run test:iyzico` ile konfigürasyonu kontrol edin
-2. **API anahtarları**: 
-   - Development için: [dev.iyzipay.com](https://dev.iyzipay.com) sandbox anahtarları
-   - Production için: [merchant.iyzipay.com](https://merchant.iyzipay.com) canlı anahtarları
-3. **Environment variables** doğru ayarlandığından emin olun:
-   ```env
-   NODE_ENV=development  # Sandbox için
-   # veya
-   NODE_ENV=production   # Canlı ortam için
-   ```
-4. `npm run test:connection` ile bağlantıyı test edin
-5. Browser cache'ini temizleyin
-
-### Debug API
-Sistem durumunu kontrol etmek için: `http://localhost:3000/api/iyzico/debug`
-
-## 📝 Notlar
-
-- Fiyatlar kuruş cinsinden saklanır (100 = 1 TL)
-- Callback URL'i production'da güncellenmelidir
-- Iyzico merchant panel'den webhook ayarları yapılabilir
-- Test ortamında gerçek para transferi olmaz
-- Her ödeme işleminde benzersiz token oluşturulur
-
-## 🤝 Katkıda Bulunma
-
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
-3. Commit yapın (`git commit -m 'Add some AmazingFeature'`)
-4. Push yapın (`git push origin feature/AmazingFeature`)
-5. Pull Request oluşturun
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır.
-
-## 🔗 Faydalı Bağlantılar
-
-- [Iyzico Developer Dokümantasyonu](https://dev.iyzipay.com/tr)
-- [iyzipay-node GitHub Repository](https://github.com/iyzico/iyzipay-node)
-- [Next.js Dokümantasyonu](https://nextjs.org/docs)
-- [Tailwind CSS Dokümantasyonu](https://tailwindcss.com/docs)
+Bu component ile hızlıca sanal ürün satışına başlayabilirsiniz! 🎉

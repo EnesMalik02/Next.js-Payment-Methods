@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { retrieveCheckoutForm } from '@/components/iyzico';
+import { retrievePayment } from '@/lib/iyzico';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     console.log('Token ile ödeme sonucu sorgulanıyor:', token);
 
     // Ödeme sonucunu Iyzico'dan al
-    const result = await retrieveCheckoutForm(token);
+    const result = await retrievePayment(token);
     console.log('Iyzico yanıtı:', result);
 
     if (result.status === 'success') {
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
 
   try {
     console.log('GET: Token ile ödeme sonucu sorgulanıyor:', token);
-    const result = await retrieveCheckoutForm(token);
+    const result = await retrievePayment(token);
     console.log('GET: Iyzico yanıtı:', result);
 
     if (result.status === 'success') {
