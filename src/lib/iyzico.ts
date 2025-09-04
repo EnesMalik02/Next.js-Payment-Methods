@@ -19,13 +19,28 @@ export const IYZICO_CONSTANTS = {
     PRODUCT: Iyzipay.PAYMENT_GROUP.PRODUCT
   },
   BASKET_ITEM_TYPE: {
-    PHYSICAL: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL
+    PHYSICAL: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL
   }
 };
 
 export const createCheckoutForm = (paymentData: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     iyzipay.checkoutFormInitialize.create(paymentData, (err: any, result: any) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+export const retrievePaymentDetails = (token: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    iyzipay.checkoutForm.retrieve({
+      locale: Iyzipay.LOCALE.TR,
+      token: token,
+    }, (err: any, result: any) => {
       if (err) {
         reject(err);
       } else {
