@@ -64,9 +64,9 @@ const main = async () => {
   testEnvironmentVariables();
   testPaymentFlow();
   
-  if (process.argv.includes('--connection')) {
-    await testIyzicoConnection();
-  }
+  // if (process.argv.includes('--connection')) {
+  //   await testIyzicoConnection();
+  // }
   
   console.log('📝 Kullanım:');
   console.log('  node test-iyzico.js --connection  (API bağlantısını test et)');
