@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCheckoutForm, IYZICO_CONSTANTS } from '@/lib/iyzico';
+import { createCheckoutForm, IYZICO_CONSTANTS } from '@/components/iyzico';
 
 interface CartItem {
   id: number;
@@ -29,13 +29,6 @@ export async function POST(request: NextRequest) {
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json(
         { status: 'failure', errorMessage: 'Sepet boş' },
-        { status: 400 }
-      );
-    }
-
-    if (!buyerInfo.name || !buyerInfo.surname || !buyerInfo.email || !buyerInfo.phone) {
-      return NextResponse.json(
-        { status: 'failure', errorMessage: 'Gerekli müşteri bilgileri eksik' },
         { status: 400 }
       );
     }

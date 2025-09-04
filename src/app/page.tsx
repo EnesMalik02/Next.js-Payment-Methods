@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import IyzicoPayment from '@/components/IyzicoPayment';
 
 interface Product {
   id: number;
@@ -124,25 +125,6 @@ export default function Home() {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
-  const proceedToCheckout = () => {
-    if (cart.length === 0) {
-      alert('Sepetiniz boş!');
-      return;
-    }
-    
-    // Sepet verilerini benzersiz timestamp ile kaydet
-    const cartWithTimestamp = {
-      items: cart,
-      timestamp: Date.now(),
-      sessionId: Math.random().toString(36).substring(2, 15)
-    };
-    
-    console.log('Sepet ödemeye gönderiliyor:', cartWithTimestamp);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    localStorage.setItem('cartSession', JSON.stringify(cartWithTimestamp));
-    
-    window.location.href = '/payment';
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -198,12 +180,18 @@ export default function Home() {
                         Sepete Ekle
                       </button>
                     </div>
-                    <button
-                      onClick={() => addToCart(product)}
+                    <IyzicoPayment
+                      type="single"
+                      product={product}
+                      buttonText="Satın Al"
                       className="w-full bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors text-sm"
-                    >
-                      Hızlı Ekle
-                    </button>
+                      onSuccess={(result) => {
+                        console.log('Ödeme başarılı:', result);
+                      }}
+                      onError={(error) => {
+                        console.error('Ödeme hatası:', error);
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -244,17 +232,30 @@ export default function Home() {
                 </>
               )}
               
-              <button
-                onClick={proceedToCheckout}
-                disabled={cart.length === 0}
-                className={`w-full mt-6 py-3 rounded-lg font-semibold transition-colors ${
-                  cart.length === 0
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
-              >
-                Ödemeye Geç
-              </button>
+              {cart.length > 0 ? (
+                <IyzicoPayment
+                  type="cart"
+                  cartItems={cart}
+                  buttonText="Sepeti Öde"
+                  className="w-full mt-6 py-3 rounded-lg font-semibold transition-colors bg-blue-600 text-white hover:bg-blue-700"
+                  onSuccess={(result) => {
+                    console.log('Sepet ödemesi başarılı:', result);
+                    // Sepeti temizle
+                    setCart([]);
+                    localStorage.removeItem('cart');
+                  }}
+                  onError={(error) => {
+                    console.error('Sepet ödemesi hatası:', error);
+                  }}
+                />
+              ) : (
+                <button
+                  disabled
+                  className="w-full mt-6 py-3 rounded-lg font-semibold transition-colors bg-gray-300 text-gray-500 cursor-not-allowed"
+                >
+                  Ödemeye Geç
+                </button>
+              )}
             </div>
           </div>
         </div>

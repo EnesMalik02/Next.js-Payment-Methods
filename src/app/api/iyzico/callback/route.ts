@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { retrieveCheckoutForm } from '@/lib/iyzico';
+import { retrieveCheckoutForm } from '@/components/iyzico';
 
 export async function POST(request: NextRequest) {
   try {

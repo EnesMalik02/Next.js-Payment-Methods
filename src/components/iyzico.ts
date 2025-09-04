@@ -76,58 +76,5 @@ export const retrieveCheckoutForm = (token: string): Promise<any> => {
   });
 };
 
-// Doğrudan ödeme oluşturma fonksiyonu
-export const createPayment = (paymentData: any): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    iyzipay.payment.create(paymentData, (err: any, result: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
-// Ödeme iptal etme fonksiyonu
-export const cancelPayment = (paymentId: string, ip: string): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    const request = {
-      locale: IYZICO_CONSTANTS.LOCALE.TR,
-      conversationId: Date.now().toString(),
-      paymentId: paymentId,
-      ip: ip
-    };
-
-    iyzipay.cancel.create(request, (err: any, result: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
-
-// İade oluşturma fonksiyonu
-export const createRefund = (paymentTransactionId: string, price: string, ip: string): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    const request = {
-      locale: IYZICO_CONSTANTS.LOCALE.TR,
-      conversationId: Date.now().toString(),
-      paymentTransactionId: paymentTransactionId,
-      price: price,
-      ip: ip
-    };
-
-    iyzipay.refund.create(request, (err: any, result: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
 
 export default iyzipay;
