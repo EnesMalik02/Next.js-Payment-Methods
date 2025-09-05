@@ -8,20 +8,6 @@ const iyzipay = new Iyzipay({
     : 'https://sandbox-api.iyzipay.com'
 });
 
-export const IYZICO_CONSTANTS = {
-  LOCALE: {
-    TR: Iyzipay.LOCALE.TR
-  },
-  CURRENCY: {
-    TRY: Iyzipay.CURRENCY.TRY
-  },
-  PAYMENT_GROUP: {
-    PRODUCT: Iyzipay.PAYMENT_GROUP.PRODUCT
-  },
-  BASKET_ITEM_TYPE: {
-    PHYSICAL: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL
-  }
-};
 
 export const createCheckoutForm = (paymentData: any): Promise<any> => {
   return new Promise((resolve, reject) => {
