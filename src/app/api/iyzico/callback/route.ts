@@ -50,39 +50,22 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const token = formData.get('token') as string;
 
-    console.log('Callback POST çağrısı alındı:', { token: token ? 'mevcut' : 'yok' });
+    console.log('📥 Callback POST çağrısı:', { 
+      token: token ? '✅ mevcut' : '❌ yok',
+      userAgent: request.headers.get('user-agent'),
+      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+    });
 
     if (!token) {
-      console.error('Token bulunamadı');
-      return NextResponse.redirect(createRedirectUrl('error', { message: 'Token bulunamadı' }));
+      console.error('❌ Token bulunamadı');
+      return NextResponse.redirect(`${BASE_URL}/order-result?status=error&message=Token bulunamadı`);
     }
 
     const redirectUrl = await processPayment(token);
     return NextResponse.redirect(redirectUrl);
 
   } catch (error) {
-    console.error('Callback POST hatası:', error);
-    return NextResponse.redirect(createRedirectUrl('error', { message: 'Sunucu hatası' }));
-  }
-}
-
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const token = searchParams.get('token');
-
-    console.log('Callback GET çağrısı alındı:', { token: token ? 'mevcut' : 'yok' });
-
-    if (!token) {
-      console.error('GET: Token bulunamadı');
-      return NextResponse.redirect(createRedirectUrl('error', { message: 'Token bulunamadı' }));
-    }
-
-    const redirectUrl = await processPayment(token);
-    return NextResponse.redirect(redirectUrl);
-
-  } catch (error) {
-    console.error('Callback GET hatası:', error);
-    return NextResponse.redirect(createRedirectUrl('error', { message: 'Sunucu hatası' }));
+    console.error('❌ Callback POST hatası:', error);
+    return NextResponse.redirect(`${BASE_URL}/order-result?status=error&message=Sunucu hatası`);
   }
 }
