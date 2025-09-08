@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { retrievePaymentDetails } from '@/lib/iyzico';
+import { retrievePaymentDetails } from '@/lib/payment/iyzico';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 // Helper function to create redirect URL
 const createRedirectUrl = (status: string, data?: any) => {
-  const url = new URL('/order-result', BASE_URL);
+  // Başarı durumunda orderId'nin data içinde gelmesi zorunludur.
+  // Bu ID, Next.js'teki dinamik [order-id] segmentini dolduracak.
+  const orderId = data?.orderId || data?.merchantOid || 'bilinmeyen-siparis';
+
+  // URL'i oluştururken orderId'yi doğrudan path'e ekliyoruz.
+  const url = new URL(`/order-confirmation/${orderId}`, BASE_URL);
+
+  // Geri kalan parametreleri searchParams olarak eklemeye devam ediyoruz.
   url.searchParams.set('status', status);
   
   switch (status) {
@@ -16,7 +23,7 @@ const createRedirectUrl = (status: string, data?: any) => {
       break;
     case 'failure':
     case 'error':
-      url.searchParams.set('message', data?.message || 'Bilinmeyen hata');
+      url.searchParams.set('message', data?.message || 'Bilinmeyen bir hata oluştu.');
       break;
   }
   
