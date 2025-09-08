@@ -20,7 +20,7 @@ const BuyButton: React.FC<BuyButtonProps> = ({
   const { loading, buyProduct } = usePayment();
 
   const handleClick = () => {
-    buyProduct(product, {}, 'iyzico');
+    buyProduct(product, onSuccess, onError);
   };
 
   const defaultClassName = `
