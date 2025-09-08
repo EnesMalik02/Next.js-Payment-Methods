@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { retrievePaymentDetails } from '@/lib/iyzico';
+import { PaymentService, SupportedProviders } from '@/lib/payment/provider';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
@@ -24,10 +24,11 @@ const createRedirectUrl = (status: string, data?: any) => {
 };
 
 // Helper function to process payment
-const processPayment = async (token: string) => {
+const processPayment = async (token: string, provider: SupportedProviders) => {
+
   console.log('Token ile ödeme sonucu sorgulanıyor:', token);
   
-  const result = await retrievePaymentDetails(token);
+  const result = await new PaymentService(provider).retrievePaymentDetails(token);
   console.log('Iyzico yanıtı:', result);
 
   if (result.status === 'success') {
@@ -49,6 +50,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const token = formData.get('token') as string;
+    const provider = request.nextUrl.searchParams.get('provider') || '';
 
     console.log('📥 Callback POST çağrısı:', { 
       token: token ? '✅ mevcut' : '❌ yok',
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.redirect(`${BASE_URL}/order-result?status=error&message=Token bulunamadı`);
     }
 
-    const redirectUrl = await processPayment(token);
+    const redirectUrl = await processPayment(token, provider as SupportedProviders);
     return NextResponse.redirect(redirectUrl);
 
   } catch (error) {

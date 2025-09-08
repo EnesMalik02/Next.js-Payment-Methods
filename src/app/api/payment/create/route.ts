@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createCheckoutForm } from '@/lib/iyzico';
+import { PaymentService } from '@/lib/payment/provider';
 
 export async function POST(request: NextRequest) {
   try {
-    const { paymentRequestData } = await request.json();
+    const { user, product, payment_channel } = await request.json();
 
-    // Get IP and add to buyer info
-    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
-    paymentRequestData.buyer.ip = ip;
-
-    const result = await createCheckoutForm(paymentRequestData);
+    const result = await new PaymentService(payment_channel).createCheckoutForm(user, product);
 
     return NextResponse.json({
       status: result.status,
