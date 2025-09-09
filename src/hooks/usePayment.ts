@@ -13,7 +13,7 @@ export const usePayment = () => {
   const [loading, setLoading] = useState(false);
 
   const buyProduct = async (
-    product_id: number,
+    products: Product[],
     formData: BuyerFormData,
   ) => {
     try {
@@ -43,8 +43,8 @@ export const usePayment = () => {
         body: JSON.stringify(
           {
             form_data: user_form_data,
-            product_id: product_id,
-            payment_channel: payment_channel
+            product_id: products.map(product => product.id),
+            payment_channel: payment_channel,
           }
         )
       });

@@ -4,14 +4,14 @@ import { usePayment, type Product } from '@/hooks/usePayment';
 import { BuyerFormData } from '@/app/checkout/page';
 
 interface BuyButtonProps {
-  product: Product;
+  products: Product[];
   formData: BuyerFormData;
   buttonText?: string;
   className?: string;
 }
 
 const BuyButton: React.FC<BuyButtonProps> = ({
-  product,
+  products,
   formData, 
   buttonText = 'Satın Al',
   className,
@@ -19,7 +19,7 @@ const BuyButton: React.FC<BuyButtonProps> = ({
   const { loading, buyProduct } = usePayment();
 
   const handleClick = () => {
-    buyProduct(product.id, formData);
+    buyProduct(products, formData);
   };
 
   const defaultClassName = `

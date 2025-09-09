@@ -65,7 +65,7 @@ const HeaderCart = ({ cartItems, onRemoveFromCart }: { cartItems: CartItem[], on
 };
 
 export const redirectCheckout = (product_id: number) => {
-  window.location.href = `/checkout?product_id=${product_id}`;
+  window.location.href = `/checkout?buyNow=true&product_id=${product_id}`;
 }
 
 export default function Home() {
