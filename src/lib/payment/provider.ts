@@ -34,17 +34,3 @@ export class PaymentService {
     return this.provider.retrievePaymentDetails(token);
   }
 }
-
-/**
- * Belirtilen sağlayıcı adına göre yeni bir PaymentService örneği oluşturan fabrika fonksiyonu.
- * API rotamızda bu fonksiyonu kullanarak anlık servisler oluşturacağız.
- * @param providerName 'iyzico' veya 'stripe' gibi desteklenen bir sağlayıcı adı.
- * @returns Yapılandırılmış bir PaymentService örneği.
- */
-export const getPaymentService = (providerName: SupportedProviders): PaymentService => {
-  if (!providerName) {
-    throw new Error('Ödeme sağlayıcı adı belirtilmelidir.');
-  }
-  return new PaymentService(providerName);
-};
-

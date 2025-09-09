@@ -1,9 +1,11 @@
 'use client';
 
 import { usePayment, type Product } from '@/hooks/usePayment';
+import { BuyerFormData } from '@/app/checkout/page';
 
 interface BuyButtonProps {
   product: Product;
+  formData: BuyerFormData;
   buttonText?: string;
   className?: string;
   onSuccess?: (result: any) => void;
@@ -12,6 +14,7 @@ interface BuyButtonProps {
 
 const BuyButton: React.FC<BuyButtonProps> = ({
   product,
+  formData, 
   buttonText = 'Satın Al',
   className,
   onSuccess,
@@ -20,7 +23,7 @@ const BuyButton: React.FC<BuyButtonProps> = ({
   const { loading, buyProduct } = usePayment();
 
   const handleClick = () => {
-    buyProduct(product, onSuccess, onError);
+    buyProduct(product, formData, onSuccess, onError);
   };
 
   const defaultClassName = `

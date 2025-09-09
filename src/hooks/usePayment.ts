@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BuyerFormData } from '@/app/checkout/page';
 
 export interface Product {
   id: number;
@@ -13,6 +14,7 @@ export const usePayment = () => {
 
   const buyProduct = async (
     product: Product,
+    formData: BuyerFormData,
     onSuccess?: (result: any) => void,
     onError?: (error: string) => void
   ) => {
@@ -20,11 +22,17 @@ export const usePayment = () => {
       setLoading(true);
 
       const user = {
-        id: '00000000000000000000',
-        name: 'John Doe',
-        surname: 'Doe',
-        phone: '5555555555',
-        email: 'john.doe@example.com',
+        name: formData.name,
+        surname: formData.surname,
+        phone: formData.phone,
+        email: formData.email,
+        address: formData.address,
+        city: formData.city,
+        zipCode: formData.zipCode,
+        tckn: formData.tckn,
+        companyTitle: formData.companyTitle,
+        taxOffice: formData.taxOffice,
+        taxNumber: formData.taxNumber,
       }
 
       const payment_channel = 'iyzico';

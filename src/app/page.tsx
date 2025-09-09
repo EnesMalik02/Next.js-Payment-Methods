@@ -1,35 +1,12 @@
 'use client';
 
-import BuyButton from '@/components/BuyButton';
-import type { Product } from '@/hooks/usePayment';
+import { products } from '@/lib/products';
 
-const products: Product[] = [
-  {
-    id: 1,
-    name: 'iPhone 15 Pro',
-    price: 45999,
-    category: 'Elektronik',
-    description: 'Apple iPhone 15 Pro 128GB Doğal Titanyum'
-  },
-  {
-    id: 2,
-    name: 'Samsung Galaxy S24',
-    price: 32999,
-    category: 'Elektronik',
-    description: 'Samsung Galaxy S24 256GB Siyah'
-  },
-  {
-    id: 3,
-    name: 'MacBook Air M3',
-    price: 54999,
-    category: 'Bilgisayar',
-    description: 'Apple MacBook Air 13" M3 Çip 8GB RAM 256GB SSD'
-  }
-];
+export const redirectCheckout = (product_id: number) => {
+  window.location.href = `/checkout?product_id=${product_id}`;
+}
 
 export default function Home() {
-
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -56,18 +33,7 @@ export default function Home() {
                   {product.price.toLocaleString('tr-TR')} ₺
                 </span>
               </div>
-              <BuyButton
-                product={product}
-                buttonText="Satın Al"
-                className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                onSuccess={(result) => {
-                  console.log('Ödeme başarılı:', result);
-                }}
-                onError={(error) => {
-                  console.error('Ödeme hatası:', error);
-                  alert(error);
-                }}
-              />
+              <button onClick={() => redirectCheckout(product.id)} className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">Satın Al</button>
             </div>
           ))}
         </div>
