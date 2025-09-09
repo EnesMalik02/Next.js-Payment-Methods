@@ -30,8 +30,8 @@ export class IyzicoProvider {
     const paymentData = {
       locale: Iyzipay.LOCALE.TR,
       conversationId: uuidv4(),
-      price: product_data.price.toString(), // Iyzico API'ı fiyatı string olarak bekler.
-      paidPrice: product_data.price.toString(),
+      price: '1', // Iyzico API'ı fiyatı string olarak bekler.
+      paidPrice: '1',
       currency: Iyzipay.CURRENCY.TRY,
       installment: '1',
       basketId: uuidv4(),
@@ -69,11 +69,11 @@ export class IyzicoProvider {
       },
       basketItems: [
         {
-          id: product_data.id,
-          name: product_data.name,
+          id: '2',
+          name: 'Product Name',
           category1: 'Default Category',
           itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
-          price: product_data.price.toString(),
+          price: '1',
         },
       ],
     };

@@ -7,11 +7,6 @@ import { useSearchParams } from 'next/navigation';
 import { getProductById, Product } from '@/lib/products';
 import BuyButton from '@/components/CheckoutBuyButton';
 
-// Sepetteki ürün tipi
-interface CartItem extends Product {
-    quantity: number;
-}
-
 // Form verisi tipi
 export interface BuyerFormData {
     name: string;
@@ -35,7 +30,7 @@ const LockIcon = () => (
 
 export default function CheckoutPage() {
     const searchParams = useSearchParams();
-    const [items, setItems] = useState<CartItem[]>([]);
+    const [items, setItems] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const [formData, setFormData] = useState<BuyerFormData>({
@@ -65,8 +60,8 @@ export default function CheckoutPage() {
                 const productId = searchParams.get('product_id');
                 if (productId) {
                     const foundProduct = getProductById(Number(productId));
-                    if (foundProduct) {
-                        setItems([{ ...foundProduct, quantity: 1 }]);
+                    if (foundProduct) {  
+                        setItems([foundProduct]);
                     }
                 }
             } else {
@@ -108,7 +103,7 @@ export default function CheckoutPage() {
         );
     }
 
-    const subTotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const subTotal = items.reduce((acc, item) => acc + (item.price), 0);
     const displayTax = subTotal * 0.20;
     const displayTotal = subTotal + displayTax;
 
@@ -326,11 +321,10 @@ export default function CheckoutPage() {
                                         <div key={item.id} className="flex items-center space-x-4 p-4 bg-gray-700/50 backdrop-blur-sm rounded-xl border border-gray-600">
                                             <div className="relative">
                                                 <img src={item.imageUrl} alt={item.name} className="w-20 h-20 rounded-xl object-cover shadow-lg ring-2 ring-gray-600" />
-                                                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold shadow-lg">{item.quantity}</div>
                                             </div>
                                             <div className="flex-1">
                                                 <p className="font-bold text-white text-lg leading-tight">{item.name}</p>
-                                                <p className="text-blue-400 font-semibold text-lg">{(item.price * item.quantity).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</p>
+                                                <p className="text-blue-400 font-semibold text-lg">{(item.price).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</p>
                                             </div>
                                         </div>
                                     ))}

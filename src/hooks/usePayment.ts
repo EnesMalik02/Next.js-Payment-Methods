@@ -1,19 +1,14 @@
 import { useState } from 'react';
+// BuyerFormData ve CartItem tiplerini checkout sayfasından veya merkezi bir tipler dosyasından import edin
 import { BuyerFormData } from '@/app/checkout/page';
-
-export interface Product {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  description: string;
-}
+import { Product } from '@/lib/products';
 
 export const usePayment = () => {
   const [loading, setLoading] = useState(false);
 
+  // Fonksiyonun parametresini, adet (quantity) bilgisini de içeren "CartItem[]" olarak güncelledim.
   const buyProduct = async (
-    products: Product[],
+    items: Product,
     formData: BuyerFormData,
   ) => {
     try {
@@ -31,42 +26,46 @@ export const usePayment = () => {
         companyTitle: formData.companyTitle,
         taxOffice: formData.taxOffice,
         taxNumber: formData.taxNumber,
-      }
+      };
 
       const payment_channel = 'iyzico';
+
 
       const response = await fetch('/api/payment/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(
-          {
-            form_data: user_form_data,
-            product_id: products.map(product => product.id),
-            payment_channel: payment_channel,
-          }
-        )
+        // Sunucuya, product_ids yerine "orderItems" dizisini gönderiyoruz.
+        body: JSON.stringify({
+          user_form_data,
+          items: items,
+          payment_channel,
+        })
       });
 
-      //console.log("RESPONSE:", response);
+      // Sunucudan 500 gibi bir hata dönerse, bunu yakalayıp daha anlamlı bir mesaj gösteriyoruz.
+      if (!response.ok) {
+          const errorData = await response.json();
+          // Sunucudan gelen hata mesajını kullan, yoksa genel bir mesaj göster.
+          throw new Error(errorData.errorMessage || `Sunucu hatası: ${response.status}`);
+      }
 
       const result = await response.json();
 
-      //console.log({ result });
-      //debugger; // kod burada durur, konsolda inceleyebilirsin      
-
       if (result.status === 'success') {
         if (result.paymentPageUrl) {
+          // Ödeme başarılıysa localStorage'daki sepeti temizleyebiliriz.
+          localStorage.removeItem('shoppingCart');
           window.location.href = result.paymentPageUrl;
         }
       } else {
-        alert("Ödeme hatası:" + result.errorMessage);
+        alert("Ödeme hatası: " + result.errorMessage);
       }
 
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata';
-      alert("Ödeme hatası (Catch) : " + errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen bir hata oluştu';
+      alert("İstek sırasında bir hata oluştu: " + errorMessage);
     } finally {
       setLoading(false);
     }

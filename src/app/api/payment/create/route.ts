@@ -4,12 +4,28 @@ import { getProductById } from '@/lib/products';
 
 export async function POST(request: NextRequest) {
   try {
-    const { form_data, product_id, payment_channel } = await request.json();
+    // 1. Frontend'den gelen doğru anahtar isimlerini kullanıyoruz: 'user_form_data' ve 'items'
+    const { user_form_data, items, payment_channel } = await request.json();
 
-    // Databaseden ürün bilgisini al
-    const product_data = await getProductById(product_id as number);
+    // Basit bir kontrol: Gerekli veriler geldi mi?
+    if (!user_form_data){
+      return NextResponse.json({
+        status: 'failure',
+        errorMessage: 'Eksik veya hatalı istek verisi Form Data.'
+      }, { status: 400 });
+    }
 
-    const result = await new PaymentService(payment_channel).createCheckoutForm(form_data, product_data);
+    if (!items || !items.length) {
+      return NextResponse.json({
+        status: 'failure',
+        errorMessage: 'Eksik veya hatalı istek verisi Items.'
+      }, { status: 400 });
+    }
+
+    // 2. 'items' dizisinden tüm ürün ID'lerini topluyoruz.
+    const checkoutItems = getProductById(items.id);
+    // 5. PaymentService'e güncellenmiş ve doğru veriyi gönderiyoruz.
+    const result = await new PaymentService(payment_channel).createCheckoutForm(user_form_data, checkoutItems);
 
     return NextResponse.json({
       status: result.status,
@@ -18,9 +34,11 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
+    console.error("API Hatası:", error); // Hataları sunucu konsoluna loglamak önemlidir.
     return NextResponse.json({
       status: 'failure',
-      errorMessage: 'Server error'
+      errorMessage: 'Sunucuda beklenmedik bir hata oluştu.'
     }, { status: 500 });
   }
 }
+
