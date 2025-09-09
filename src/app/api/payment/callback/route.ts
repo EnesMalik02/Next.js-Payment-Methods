@@ -49,14 +49,15 @@ const processPayment = async (token: string, provider: SupportedProviders) => {
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
+    //console.log('📥 Callback POST çağrısı:', { formData });
     const token = formData.get('token') as string;
-    const provider = request.nextUrl.searchParams.get('provider') || '';
+    const provider = request.nextUrl.searchParams.get('provider');
 
-    console.log('📥 Callback POST çağrısı:', { 
-      token: token ? '✅ mevcut' : '❌ yok',
-      userAgent: request.headers.get('user-agent'),
-      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
-    });
+    //console.log('📥 Callback POST çağrısı:', { 
+      //token: token ? '✅ mevcut' : '❌ yok',
+      //userAgent: request.headers.get('user-agent'),
+      //ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip')
+    //});
 
     if (!token) {
       console.error('❌ Token bulunamadı');
