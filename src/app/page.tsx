@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { products, Product } from '@/lib/products';
-// 1. YENİ COMPONENT'İ IMPORT EDELİM
 import { AddToCartButton } from '@/components/AddToCartButton';
+import { DirectBuyButton } from '@/components/DirectBuyButton';
 
 interface CartItem extends Product {
   quantity: number;
 }
 
-// 2. HEADER CART COMPONENT'İNİ GÜNCELLEYELİM
-// Artık sepetten ürün çıkarma fonksiyonunu da prop olarak alacak
 const HeaderCart = ({ cartItems, onRemoveFromCart }: { cartItems: CartItem[], onRemoveFromCart: (productId: number) => void }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -28,33 +26,37 @@ const HeaderCart = ({ cartItems, onRemoveFromCart }: { cartItems: CartItem[], on
           </span>
         )}
       </button>
-
       {isCartOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-10 p-4">
+        <div className="absolute right-0 mt-2 w-80 bg-gray-900 rounded-lg shadow-xl z-10 p-4 border border-gray-700">
           {cartItems.length === 0 ? (
-            <p className="text-gray-700">Sepetiniz boş.</p>
+            <p className="text-gray-300">Sepetiniz boş.</p>
           ) : (
             <>
-              <h4 className="text-lg font-semibold mb-2">Sepetim</h4>
+              <h4 className="text-lg font-semibold mb-2 text-white">Sepetim</h4>
               <ul>
                 {cartItems.map(item => (
-                  <li key={item.id} className="flex justify-between items-center border-b py-2">
+                  <li key={item.id} className="flex justify-between items-center border-b border-gray-700 py-2">
                     <div>
-                      <p className="font-semibold">{item.name}</p>
-                      <p className="text-sm text-gray-500">{item.quantity} x {item.price.toLocaleString('tr-TR')} ₺</p>
+                      <p className="font-semibold text-white">{item.name}</p>
+                      <p className="text-sm text-gray-400">{item.quantity} x {item.price.toLocaleString('tr-TR')} ₺</p>
                     </div>
-                    {/* Ürünü sepetten çıkarmak için buton */}
-                    <button onClick={() => onRemoveFromCart(item.id)} className="text-red-500 hover:text-red-700 font-bold">
+                    <button onClick={() => onRemoveFromCart(item.id)} className="text-gray-400 hover:text-white font-bold">
                       X
                     </button>
                   </li>
                 ))}
               </ul>
-              <div className="mt-4 pt-2 border-t">
-                <div className="flex justify-between font-bold text-lg">
+              <div className="mt-4 pt-2 border-t border-gray-700">
+                <div className="flex justify-between font-bold text-lg mb-4 text-white">
                   <span>Toplam:</span>
                   <span>{totalPrice.toLocaleString('tr-TR')} ₺</span>
                 </div>
+                <button 
+                  onClick={() => window.location.href = '/checkout'}
+                  className="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  Sepete Git
+                </button>
               </div>
             </>
           )}
@@ -62,7 +64,7 @@ const HeaderCart = ({ cartItems, onRemoveFromCart }: { cartItems: CartItem[], on
       )}
     </div>
   );
-};
+}
 
 export const redirectCheckout = (product_id: number) => {
   window.location.href = `/checkout?buyNow=true&product_id=${product_id}`;
@@ -79,7 +81,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Sepet boşaldığında localStorage'dan da silelim.
     if (cartItems.length === 0) {
       localStorage.removeItem('shoppingCart');
     } else {
@@ -103,22 +104,17 @@ export default function Home() {
       return prevItems;
     });
   };
-
-  // 3. SEPETTEN ÇIKARMA FONKSİYONUNU EKLEYELİM
+  
   const removeFromCart = (productId: number) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === productId);
-
-      // Ürün bulunamazsa bir şey yapma
       if (!existingItem) return prevItems;
       
-      // Ürünün adedi 1'den fazlaysa, sadece miktarını azalt
       if (existingItem.quantity > 1) {
         return prevItems.map(item => 
           item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
         );
       } else {
-        // Ürünün adedi 1 ise, ürünü sepetten tamamen kaldır
         return prevItems.filter(item => item.id !== productId);
       }
     });
@@ -131,7 +127,6 @@ export default function Home() {
           <div className="flex justify-between items-center h-16">
             <h1 className="text-2xl font-bold text-gray-900">Online Mağaza</h1>
             <div className="flex items-center space-x-4">
-              {/* 4. YENİ FONKSİYONU HEADER'A PROP OLARAK GEÇELİM */}
               <HeaderCart cartItems={cartItems} onRemoveFromCart={removeFromCart} />
             </div>
           </div>
@@ -154,14 +149,8 @@ export default function Home() {
               </div>
 
               <div className="flex items-center gap-2 mt-auto pt-4">
-                {/* 5. ESKİ BUTON YERİNE YENİ COMPONENT'İ KULLANALIM */}
                 <AddToCartButton productId={product.id} onAddToCart={addToCart} />
-                <button 
-                  onClick={() => redirectCheckout(product.id)} 
-                  className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
-                >
-                  Satın Al
-                </button>
+                <DirectBuyButton productId={product.id} />
               </div>
 
             </div>
