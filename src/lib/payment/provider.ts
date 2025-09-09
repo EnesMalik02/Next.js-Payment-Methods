@@ -26,8 +26,8 @@ export class PaymentService {
     }
   }
 
-  createCheckoutForm(userData: any, product: any): Promise<any> {
-    return this.provider.createCheckoutForm(userData, product);
+  createCheckoutForm(userData: any, product_data: any): Promise<any> {
+    return this.provider.createCheckoutForm(userData, product_data);
   }
 
   retrievePaymentDetails(token: string): Promise<any> {

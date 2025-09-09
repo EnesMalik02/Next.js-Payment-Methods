@@ -19,7 +19,7 @@ const BuyButton: React.FC<BuyButtonProps> = ({
   const { loading, buyProduct } = usePayment();
 
   const handleClick = () => {
-    buyProduct(product, formData);
+    buyProduct(product.id, formData);
   };
 
   const defaultClassName = `

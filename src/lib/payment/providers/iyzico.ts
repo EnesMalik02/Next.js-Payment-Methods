@@ -26,12 +26,12 @@ export class IyzicoProvider {
    * @param product Satın alınacak ürün bilgileri.
    * @returns Iyzico'dan dönen ödeme formu sonucu.
    */
-  public createCheckoutForm(userData: any, product: any): Promise<any> {
+  public createCheckoutForm(userData: any, product_data: any): Promise<any> {
     const paymentData = {
       locale: Iyzipay.LOCALE.TR,
       conversationId: uuidv4(),
-      price: product.price.toString(), // Iyzico API'ı fiyatı string olarak bekler.
-      paidPrice: product.price.toString(),
+      price: product_data.price.toString(), // Iyzico API'ı fiyatı string olarak bekler.
+      paidPrice: product_data.price.toString(),
       currency: Iyzipay.CURRENCY.TRY,
       installment: '1',
       basketId: uuidv4(),
@@ -69,11 +69,11 @@ export class IyzicoProvider {
       },
       basketItems: [
         {
-          id: product.id,
-          name: product.name,
+          id: product_data.id,
+          name: product_data.name,
           category1: 'Default Category',
           itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
-          price: product.price.toString(),
+          price: product_data.price.toString(),
         },
       ],
     };

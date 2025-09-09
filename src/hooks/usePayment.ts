@@ -13,13 +13,13 @@ export const usePayment = () => {
   const [loading, setLoading] = useState(false);
 
   const buyProduct = async (
-    product: Product,
+    product_id: number,
     formData: BuyerFormData,
   ) => {
     try {
       setLoading(true);
 
-      const user = {
+      const user_form_data = {
         name: formData.name,
         surname: formData.surname,
         phone: formData.phone,
@@ -33,9 +33,6 @@ export const usePayment = () => {
         taxNumber: formData.taxNumber,
       }
 
-      console.log("USER:", user);
-            
-
       const payment_channel = 'iyzico';
 
       const response = await fetch('/api/payment/create', {
@@ -43,11 +40,17 @@ export const usePayment = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user, product, payment_channel })
+        body: JSON.stringify(
+          {
+            form_data: user_form_data,
+            product_id: product_id,
+            payment_channel: payment_channel
+          }
+        )
       });
 
       //console.log("RESPONSE:", response);
-            
+
       const result = await response.json();
 
       //console.log({ result });
@@ -55,7 +58,7 @@ export const usePayment = () => {
 
       if (result.status === 'success') {
         if (result.paymentPageUrl) {
-          window.location.href = result.paymentPageUrl; 
+          window.location.href = result.paymentPageUrl;
         }
       } else {
         alert("Ödeme hatası:" + result.errorMessage);
@@ -63,7 +66,7 @@ export const usePayment = () => {
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata';
-      alert( "Ödeme hatası : " + errorMessage );
+      alert("Ödeme hatası (Catch) : " + errorMessage);
     } finally {
       setLoading(false);
     }

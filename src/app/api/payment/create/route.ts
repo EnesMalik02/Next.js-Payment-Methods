@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PaymentService } from '@/lib/payment/provider';
+import { getProductById } from '@/lib/products';
 
 export async function POST(request: NextRequest) {
   try {
-    const { user, product, payment_channel } = await request.json();
+    const { form_data, product_id, payment_channel } = await request.json();
 
-    const result = await new PaymentService(payment_channel).createCheckoutForm(user, product);
+    // Databaseden ürün fiyatını al
+    const product_data = await getProductById(product_id as number);
+
+    const result = await new PaymentService(payment_channel).createCheckoutForm(form_data, product_data);
 
     return NextResponse.json({
       status: result.status,
