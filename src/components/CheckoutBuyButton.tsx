@@ -1,10 +1,11 @@
 'use client';
 
-import { usePayment, type Product } from '@/hooks/usePayment';
+import { usePayment } from '@/hooks/usePayment';
+import { CartItem } from '@/hooks/usePayment';
 import { BuyerFormData } from '@/app/checkout/page';
 
 interface BuyButtonProps {
-  products: Product[];
+  products: CartItem[];
   formData: BuyerFormData;
   buttonText?: string;
   className?: string;
@@ -19,7 +20,7 @@ const BuyButton: React.FC<BuyButtonProps> = ({
   const { loading, buyProduct } = usePayment();
 
   const handleClick = () => {
-    buyProduct(products, formData);
+    buyProduct(products , formData);
   };
 
   const defaultClassName = `
@@ -80,4 +81,4 @@ const BuyButton: React.FC<BuyButtonProps> = ({
 };
 
 export default BuyButton;
-export type { Product, BuyButtonProps };
+export type { CartItem, BuyButtonProps };

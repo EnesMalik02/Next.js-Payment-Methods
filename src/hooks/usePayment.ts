@@ -63,8 +63,6 @@ export const usePayment = () => {
 
       if (result.status === 'success') {
         if (result.paymentPageUrl) {
-          // Ödeme başarılıysa localStorage'daki sepeti temizleyebiliriz.
-          localStorage.removeItem('shoppingCart');
           window.location.href = result.paymentPageUrl;
         }
       } else {

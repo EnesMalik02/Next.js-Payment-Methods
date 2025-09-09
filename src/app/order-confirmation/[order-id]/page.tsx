@@ -15,7 +15,7 @@ function OrderResultContent() {
   useEffect(() => {
     // Başarılı ödemede localStorage'dan sepet verilerini temizle
     if (status === 'success') {
-      localStorage.removeItem('cart');
+      localStorage.removeItem('shoppingCart');
     }
   }, [status]);
 
