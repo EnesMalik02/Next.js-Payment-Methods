@@ -15,8 +15,6 @@ export const usePayment = () => {
   const buyProduct = async (
     product: Product,
     formData: BuyerFormData,
-    onSuccess?: (result: any) => void,
-    onError?: (error: string) => void
   ) => {
     try {
       setLoading(true);
@@ -35,6 +33,9 @@ export const usePayment = () => {
         taxNumber: formData.taxNumber,
       }
 
+      console.log("USER:", user);
+            
+
       const payment_channel = 'iyzico';
 
       const response = await fetch('/api/payment/create', {
@@ -45,22 +46,24 @@ export const usePayment = () => {
         body: JSON.stringify({ user, product, payment_channel })
       });
 
+      //console.log("RESPONSE:", response);
+            
       const result = await response.json();
 
-      console.log({ result });
+      //console.log({ result });
+      //debugger; // kod burada durur, konsolda inceleyebilirsin      
 
       if (result.status === 'success') {
         if (result.paymentPageUrl) {
-          window.location.href = result.paymentPageUrl;
+          window.location.href = result.paymentPageUrl; 
         }
-        onSuccess?.(result);
       } else {
-        onError?.(result.errorMessage || 'Ödeme hatası');
+        alert("Ödeme hatası:" + result.errorMessage);
       }
 
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Bilinmeyen hata';
-      onError?.(errorMessage);
+      alert( "Ödeme hatası : " + errorMessage );
     } finally {
       setLoading(false);
     }

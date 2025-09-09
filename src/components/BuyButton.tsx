@@ -8,8 +8,6 @@ interface BuyButtonProps {
   formData: BuyerFormData;
   buttonText?: string;
   className?: string;
-  onSuccess?: (result: any) => void;
-  onError?: (error: string) => void;
 }
 
 const BuyButton: React.FC<BuyButtonProps> = ({
@@ -17,13 +15,11 @@ const BuyButton: React.FC<BuyButtonProps> = ({
   formData, 
   buttonText = 'Satın Al',
   className,
-  onSuccess,
-  onError
 }) => {
   const { loading, buyProduct } = usePayment();
 
   const handleClick = () => {
-    buyProduct(product, formData, onSuccess, onError);
+    buyProduct(product, formData);
   };
 
   const defaultClassName = `
