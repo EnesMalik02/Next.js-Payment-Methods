@@ -4,8 +4,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getProductById, Product } from '@/lib/products';
+import { getProductById } from '@/lib/products';
 import BuyButton from '@/components/CheckoutBuyButton';
+import { CartItem } from '@/hooks/usePayment';
 
 // Form verisi tipi
 export interface BuyerFormData {
@@ -28,23 +29,23 @@ const LockIcon = () => (
     </svg>
 );
 
-export default function CheckoutPage() {
+export default function CheckoutPage() {    
     const searchParams = useSearchParams();
-    const [items, setItems] = useState<Product[]>([]);
+    const [items, setItems] = useState<CartItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const [formData, setFormData] = useState<BuyerFormData>({
-        name: '',
-        surname: '',
-        phone: '',
-        email: '',
-        address: '',
-        city: '',
-        zipCode: '',
-        tckn: '',
-        companyTitle: '',
-        taxOffice: '',
-        taxNumber: ''
+        name: 'Enes Malik',
+        surname: 'Arı',
+        phone: '006654',
+        email: 'enesar@gmail.com',
+        address: 'Kadıköy',
+        city: 'Kadıköy',
+        zipCode: '34000',
+        tckn: '12345678901',
+        companyTitle: 'Enes Arı',
+        taxOffice: 'Kadıköy',
+        taxNumber: '1234567890'
     });
 
     const [invoiceType, setInvoiceType] = useState<'individual' | 'corporate'>('individual');
@@ -61,7 +62,7 @@ export default function CheckoutPage() {
                 if (productId) {
                     const foundProduct = getProductById(Number(productId));
                     if (foundProduct) {  
-                        setItems([foundProduct]);
+                        setItems([{ ...foundProduct, quantity: 1 }]);
                     }
                 }
             } else {
@@ -103,9 +104,10 @@ export default function CheckoutPage() {
         );
     }
 
-    const subTotal = items.reduce((acc, item) => acc + (item.price), 0);
-    const displayTax = subTotal * 0.20;
-    const displayTotal = subTotal + displayTax;
+    const subTotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+    const subTotalWithoutTax = subTotal / 1.20; // KDV hariç
+    const taxAmount = subTotal - subTotalWithoutTax; // KDV tutarı
+    const total = subTotal; // KDV dahil toplam
 
     return (
         <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen p-4 sm:p-8">
@@ -333,10 +335,10 @@ export default function CheckoutPage() {
                             <div className="flex-grow"></div>
                             <div className="mt-8 bg-gray-800/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-600">
                                 <div className="space-y-4">
-                                    <div className="flex justify-between text-gray-300 text-lg"><span>Ara Toplam</span><span className="font-medium text-white">{subTotal.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span></div>
-                                    <div className="flex justify-between text-gray-300 text-lg"><span>KDV (%20)</span><span className="font-medium text-white">{displayTax.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span></div>
+                                    <div className="flex justify-between text-gray-300 text-lg"><span>Ara Toplam</span><span className="font-medium text-white">{subTotalWithoutTax.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span></div>
+                                    <div className="flex justify-between text-gray-300 text-lg"><span>KDV (%20)</span><span className="font-medium text-white">{taxAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span></div>
                                     <div className="border-t-2 border-gray-600 pt-4">
-                                        <div className="flex justify-between text-2xl font-bold text-white"><span>Toplam</span><span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{displayTotal.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span></div>
+                                        <div className="flex justify-between text-2xl font-bold text-white"><span>Toplam</span><span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{total.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span></div>
                                     </div>
                                 </div>
                                 <div className="mt-6">

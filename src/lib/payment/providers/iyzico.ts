@@ -27,11 +27,21 @@ export class IyzicoProvider {
    * @returns Iyzico'dan dönen ödeme formu sonucu.
    */
   public createCheckoutForm(userData: any, product_data: any): Promise<any> {
+    // Basket items'ı Iyzico formatına dönüştür
+    const basketItems = product_data.items.map((item: any) => ({
+      id: item.product.id.toString(),
+      name: item.product.name,
+      category1: item.product.category || 'Genel',
+      category2: item.product.subcategory || 'Alt Kategori',
+      itemType: Iyzipay.BASKET_ITEM_TYPE.PHYSICAL,
+      price: item.totalPrice.toFixed(2) // Toplam fiyat (miktar * birim fiyat)
+    }));
+
     const paymentData = {
       locale: Iyzipay.LOCALE.TR,
       conversationId: uuidv4(),
-      price: '1', // Iyzico API'ı fiyatı string olarak bekler.
-      paidPrice: '1',
+      price: product_data.grandTotal.toFixed(2), // Iyzico API'ı fiyatı string olarak bekler.
+      paidPrice: product_data.grandTotal.toFixed(2),
       currency: Iyzipay.CURRENCY.TRY,
       installment: '1',
       basketId: uuidv4(),
@@ -55,27 +65,19 @@ export class IyzicoProvider {
       },
       shippingAddress: {
         contactName: `${userData.name} ${userData.surname}`,
-        city: userData.city || 'Anytown' ,
+        city: userData.city || 'Anytown',
         country: userData.country || 'USA',
         address: userData.registrationAddress || '123 Main St, Anytown, USA',
         zipCode: userData.zipCode || '12345',
       },
       billingAddress: {
         contactName: `${userData.name} ${userData.surname}`,
-        city: userData.city || 'Anytown'  ,
+        city: userData.city || 'Anytown',
         country: userData.country || 'USA',
         address: userData.registrationAddress || '123 Main St, Anytown, USA',
-        zipCode: userData.zipCode || '12345', 
+        zipCode: userData.zipCode || '12345',
       },
-      basketItems: [
-        {
-          id: '2',
-          name: 'Product Name',
-          category1: 'Default Category',
-          itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
-          price: '1',
-        },
-      ],
+      basketItems: basketItems
     };
 
     return new Promise((resolve, reject) => {
@@ -110,4 +112,3 @@ export class IyzicoProvider {
     });
   }
 }
-

@@ -2,13 +2,15 @@ import { useState } from 'react';
 // BuyerFormData ve CartItem tiplerini checkout sayfasından veya merkezi bir tipler dosyasından import edin
 import { BuyerFormData } from '@/app/checkout/page';
 import { Product } from '@/lib/products';
+export interface CartItem extends Product {
+  quantity: number;
+}
 
 export const usePayment = () => {
   const [loading, setLoading] = useState(false);
 
-  // Fonksiyonun parametresini, adet (quantity) bilgisini de içeren "CartItem[]" olarak güncelledim.
   const buyProduct = async (
-    items: Product,
+    items: CartItem[],
     formData: BuyerFormData,
   ) => {
     try {
@@ -31,15 +33,21 @@ export const usePayment = () => {
       const payment_channel = 'iyzico';
 
 
+      // ID ve adet içeren 'items' dizisini doğrudan gönderiyoruz.
+      const itemsToSend = items.map((item: CartItem) => ({
+        id: item.id,
+        quantity: item.quantity,
+      }));
+
       const response = await fetch('/api/payment/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        // Sunucuya, product_ids yerine "orderItems" dizisini gönderiyoruz.
+        // Sunucuya, ID ve adet içeren 'items' dizisini doğrudan gönderiyoruz.
         body: JSON.stringify({
           user_form_data,
-          items: items,
+          items: itemsToSend, // Artık ek bir map'lemeye gerek yok.
           payment_channel,
         })
       });
@@ -73,3 +81,4 @@ export const usePayment = () => {
 
   return { loading, buyProduct };
 };
+
