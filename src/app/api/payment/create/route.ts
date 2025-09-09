@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const { form_data, product_id, payment_channel } = await request.json();
 
-    // Databaseden ürün fiyatını al
+    // Databaseden ürün bilgisini al
     const product_data = await getProductById(product_id as number);
 
     const result = await new PaymentService(payment_channel).createCheckoutForm(form_data, product_data);

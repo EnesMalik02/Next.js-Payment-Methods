@@ -5,7 +5,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 // Helper function to create redirect URL
 const createRedirectUrl = (status: string, data?: any) => {
-  const url = new URL('/order-result', BASE_URL);
+  const url = new URL('/order-confirmation/order-id', BASE_URL);
   url.searchParams.set('status', status);
   
   switch (status) {
