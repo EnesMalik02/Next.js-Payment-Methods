@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PaymentService } from '@/lib/payment/provider';
+import { PaymentService } from '@/lib/payment/payment.service';
 import { getProductById, getPriceById, Product } from '@/lib/products';
 
 interface CheckoutItem {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       grandTotal: checkoutItems.reduce((sum, item) => sum + item.totalPrice, 0)
     };
 
-    console.log({ checkoutData });
+    // console.log({ checkoutData });
 
     // Ödeme sayfası oluştur
     const result = await new PaymentService(payment_channel).createCheckoutForm(user_form_data, checkoutData);

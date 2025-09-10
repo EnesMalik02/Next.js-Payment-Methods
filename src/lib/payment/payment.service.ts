@@ -1,14 +1,7 @@
 import { IyzicoProvider } from './providers/iyzico';  
-// import { StripeProvider } from '../providers/stripe.provider'; // Gelecekte eklemek için
-
-// Desteklenen ödeme sağlayıcılarının tiplerini tanımlayalım.
-export type SupportedProviders = 'iyzico' | 'stripe';
-
-/**
- * Bu sınıf, seçilen ödeme sağlayıcısı (Iyzico, Stripe vb.) için bir aracı görevi görür.
- * Dış dünyanın doğrudan sağlayıcı sınıflarıyla konuşması yerine bu servis ile iletişim kurmasını sağlar.
- */
-export class PaymentService {
+import { IPaymentProvider } from './payment.interface';
+import { SupportedProviders } from './payment.interface';
+export class PaymentService implements IPaymentProvider {
   private provider: any;
 
   constructor(providerName: SupportedProviders) {
@@ -30,7 +23,7 @@ export class PaymentService {
     return this.provider.createCheckoutForm(userData, product_data);
   }
 
-  retrievePaymentDetails(token: string): Promise<any> {
-    return this.provider.retrievePaymentDetails(token);
+  verifyPaymentDetails(token: string): Promise<any> {
+    return this.provider.verifyPaymentDetails(token);
   }
 }

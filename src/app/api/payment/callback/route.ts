@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PaymentService, SupportedProviders } from '@/lib/payment/provider';
+import { PaymentService } from '@/lib/payment/payment.service';
+import { SupportedProviders } from '@/lib/payment/payment.interface';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
@@ -28,7 +29,7 @@ const processPayment = async (token: string, provider: SupportedProviders) => {
 
   console.log('Token ile ödeme sonucu sorgulanıyor:', token);
   
-  const result = await new PaymentService(provider).retrievePaymentDetails(token);
+  const result = await new PaymentService(provider).verifyPaymentDetails(token);
   console.log('Iyzico yanıtı:', result);
 
   if (result.status === 'success') {

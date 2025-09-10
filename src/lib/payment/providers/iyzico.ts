@@ -1,11 +1,12 @@
 import Iyzipay from 'iyzipay';
 import { v4 as uuidv4 } from 'uuid';
+import { IPaymentProvider } from '../payment.interface';
 
 /**
  * Iyzico ödeme sağlayıcısı için tüm mantığı içeren sınıf.
  * IPaymentProvider arayüzünü uygulayarak, PaymentService ile tam uyumlu çalışır.
  */
-export class IyzicoProvider {
+export class IyzicoProvider implements IPaymentProvider {
   private iyzipay: any;
 
   constructor() {
@@ -97,7 +98,7 @@ export class IyzicoProvider {
    * @param token Ödeme işlemine ait tekil token.
    * @returns Ödeme detayı sonucu.
    */
-  public retrievePaymentDetails(token: string): Promise<any> {
+  public verifyPaymentDetails(token: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.iyzipay.checkoutForm.retrieve({
         locale: Iyzipay.LOCALE.TR,
